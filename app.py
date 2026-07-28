@@ -1,3 +1,8 @@
+# ==========================================
+# ASSISTENTE ACADÊMICO - servidor Flask (Python)
+# Migrado de Node.js/Express para Python/Flask
+# Layout e front-end (index.html) permanecem 100% iguais.
+# ==========================================
 import io
 import os
 import time
@@ -6,12 +11,12 @@ import threading
 
 import requests
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, send_from_directory, send_file, abort
+from flask import Flask, request, jsonify, render_template, send_file, abort
 
 from docx import Document as DocxReader
 from pypdf import PdfReader
 
-from docx_abnt import gerar_documento_word_bytes, gerar_documento_simples_bytes
+from documentacaoABNT import gerar_documento_word_bytes, gerar_documento_simples_bytes
 
 load_dotenv()
 
@@ -208,9 +213,7 @@ Conteúdo enviado:
 # ==========================================
 # SERVIDOR FLASK
 # ==========================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
+app = Flask(__name__)  # usa as pastas padrão: templates/ e static/
 
 # Guarda em memória os últimos documentos gerados (id -> {buffer, nomeArquivo})
 documentos_gerados = {}
@@ -234,7 +237,7 @@ def registrar_documento(buffer, nome_arquivo):
 
 @app.route("/")
 def index():
-    return send_from_directory(BASE_DIR, "index.html")
+    return render_template("index.html")
 
 
 @app.route("/download/<doc_id>")
